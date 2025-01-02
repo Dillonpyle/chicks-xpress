@@ -1,7 +1,7 @@
 import { auth } from "express-oauth2-jwt-bearer";
 
-const jwtCheck = auth({
-    audience: 'chicksxpress-api',
-    issuerBaseURL: 'https://dev-zf8hs08chh22po4a.us.auth0.com/',
+export const jwtCheck = auth({
+    audience: process.env.AUTH0_AUDIENCE,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
     tokenSigningAlg: 'RS256'
   });
