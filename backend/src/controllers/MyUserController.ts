@@ -1,12 +1,28 @@
 import express, { NextFunction, Request, Response } from 'express';
 import User from '../models/user';
 
-const createCurrentUser: express.RequestHandler = async (req: Request, res: Response) => {
+const getCurrentUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const currentUser = await User.findOne({ _id: req.userId });
+      if (!currentUser) {
+        res.status(404).json({ message: "User not found" });
+        return 
+      }
+  
+      res.json(currentUser);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Something went wrong" });
+      return 
+    }
+  };
+
+async function createCurrentUser(req: Request, res: Response) {
     try {
         const { auth0Id } = req.body;
         const existingUser = await User.findOne({ auth0Id });
 
-        if(existingUser) {
+        if (existingUser) {
             res.status(200).send();
             return;
         }
@@ -18,7 +34,7 @@ const createCurrentUser: express.RequestHandler = async (req: Request, res: Resp
         console.log(error);
         res.status(500).json({ message: 'Error creating user' });
     }
-};
+}
 
 const updateCurrentUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -46,4 +62,4 @@ const updateCurrentUser = async (req: Request, res: Response, next: NextFunction
 
 
 
-export default {createCurrentUser, updateCurrentUser};
+export default {createCurrentUser, updateCurrentUser, getCurrentUser,};
